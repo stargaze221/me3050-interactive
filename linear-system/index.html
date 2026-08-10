@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ME 3050 Linear System Explorer — Pulse Response and Superposition</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <h1>ME 3050 — Linear System Explorer</h1>
+    <p><strong>Pulse decomposition → single-pulse response → superposition</strong></p>
+    <p>
+      Approximate <span class="eq">x(t) = A sin(ωt)</span> with rectangular pulses and pass them through
+      <span class="eq">τ ẏ(t) + y(t) = u(t)</span>.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Controls</h2>
+    <div class="controls">
+      <div class="control">
+        <label for="amp">Amplitude A <span class="value" id="ampVal"></span></label>
+        <input id="amp" type="range" min="0.5" max="3" step="0.1" value="1">
+      </div>
+      <div class="control">
+        <label for="omega">Angular frequency ω <span class="value" id="omegaVal"></span></label>
+        <input id="omega" type="range" min="0.5" max="4" step="0.1" value="1.5">
+      </div>
+      <div class="control">
+        <label for="nPulse">Number of pulses N <span class="value" id="nPulseVal"></span></label>
+        <input id="nPulse" type="range" min="8" max="80" step="1" value="24">
+      </div>
+      <div class="control">
+        <label for="tau">System time constant τ <span class="value" id="tauVal"></span></label>
+        <input id="tau" type="range" min="0.1" max="3" step="0.05" value="0.7">
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Pulse width Δt</div><div class="v" id="dtStat"></div></div>
+      <div class="stat"><div class="k">RMS input approximation error</div><div class="v" id="rmsStat"></div></div>
+      <div class="stat"><div class="k">Selected pulse amplitude aₖ</div><div class="v" id="ukStat"></div></div>
+      <div class="stat"><div class="k">Selected pulse</div><div class="v" id="kStat"></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Step 1. Input decomposition — click a pulse</h2>
+    <div class="legend" aria-hidden="true">
+      <span class="exact">Exact sine</span>
+      <span class="pulse">Rectangular approximation</span>
+      <span class="sample">Midpoint samples</span>
+      <span class="selected">Selected pulse</span>
+    </div>
+    <div class="selection-row">
+      <button id="prevBtn" type="button">← Previous pulse</button>
+      <button id="nextBtn" type="button">Next pulse →</button>
+      <label for="pulseSelect" class="sr-only">Select pulse number</label>
+      <select id="pulseSelect" aria-label="Select pulse number"></select>
+      <div class="selected-info" id="selectedInfo"></div>
+    </div>
+    <div class="plot-wrap">
+      <svg id="inputPlot" viewBox="0 0 1000 430" role="img" aria-label="Sine wave and rectangular pulse approximation"></svg>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Step 2. Response to one selected pulse</h2>
+    <div class="legend" aria-hidden="true">
+      <span class="selected">Selected pulse time window</span>
+      <span class="selected">Single-pulse response yₖ(t)</span>
+    </div>
+    <div class="plot-wrap">
+      <svg id="responsePlot" viewBox="0 0 1000 430" role="img" aria-label="Response to the selected rectangular pulse"></svg>
+    </div>
+    <div class="note">
+      The selected input component is treated independently. This gives one response
+      <span class="formula">yₖ(t)</span>. A linear system allows us to repeat this for every pulse.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Step 3. Superposition — add all pulse responses</h2>
+    <div class="toggles">
+      <label><input id="showComponents" type="checkbox" checked> Show individual yₖ(t)</label>
+      <label><input id="showDirect" type="checkbox" checked> Show direct response to pulse approximation</label>
+      <label><input id="showExactResponse" type="checkbox" checked> Compare with exact sine-input response</label>
+    </div>
+    <div class="legend" aria-hidden="true">
+      <span class="components">Individual yₖ(t)</span>
+      <span class="selected">Selected yₖ(t)</span>
+      <span class="sum">Σ yₖ(t)</span>
+      <span class="direct">Direct pulse-input response</span>
+      <span class="exact">Exact sine-input response</span>
+    </div>
+    <div class="plot-wrap">
+      <svg id="superPlot" viewBox="0 0 1000 460" role="img" aria-label="Superposition of all pulse responses"></svg>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="k">Max |Σyₖ − direct response|</div><div class="v" id="superErr"></div></div>
+      <div class="stat"><div class="k">RMS |pulse-response − exact-sine response|</div><div class="v" id="outputErr"></div></div>
+      <div class="stat"><div class="k">Number of component responses</div><div class="v" id="componentCount"></div></div>
+      <div class="stat"><div class="k">System τ</div><div class="v" id="tauStat"></div></div>
+    </div>
+
+    <div class="concept">
+      <div>
+        <strong>Decompose</strong>
+        <small>The input is represented as a sum of rectangular pulse components.</small>
+      </div>
+      <div>
+        <strong>Respond separately</strong>
+        <small>Each pulse produces its own first-order response yₖ(t).</small>
+      </div>
+      <div>
+        <strong>Add the responses</strong>
+        <small>For a linear system, the sum of component responses equals the response to the summed input.</small>
+      </div>
+    </div>
+
+    <div class="note">
+      This is the key bridge to convolution:
+      <span class="formula">y(t) ≈ Σ yₖ(t)</span>.
+      As <span class="formula">Δt → 0</span>, the rectangular-pulse sum will lead naturally to an
+      impulse-response weighted sum and then to the convolution integral.
+    </div>
+  </section>
+</main>
+
+<script src="app.js" defer></script>
+</body>
+</html>
