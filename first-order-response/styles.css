@@ -1,0 +1,49 @@
+:root{
+  --bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#d9deea;--grid:#e9edf5;
+  --blue:#2653a5;--orange:#d97706;--green:#15956b;--purple:#7c3aed;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:1120px;margin:0 auto;padding:22px}
+.hero{background:linear-gradient(135deg,#173d75,#265fae);color:#fff;border-radius:16px;padding:24px 26px;margin-bottom:16px}
+.eyebrow{font-size:.82rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase;opacity:.9}
+.hero h1{margin:5px 0 8px;font-size:clamp(1.55rem,3vw,2.1rem)}
+.hero p{margin:0 0 10px;line-height:1.55;max-width:820px}
+.equation{display:inline-block;padding:7px 11px;border-radius:8px;background:rgba(255,255,255,.13);font-family:"Cambria Math","Times New Roman",serif;font-size:1.08rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0;box-shadow:0 3px 12px rgba(16,24,40,.05)}
+.card h2{font-size:1.12rem;margin:0 0 12px}
+.lead{color:#475467;line-height:1.55;margin:0 0 14px}
+.controls{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:14px 18px}
+.control label{display:flex;justify-content:space-between;gap:8px;font-size:.91rem;font-weight:650;margin-bottom:6px}
+.value{color:var(--blue);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fafbfe}
+.stat .k{font-size:.78rem;color:var(--muted);margin-bottom:3px}
+.stat .v{font-weight:750;font-variant-numeric:tabular-nums}
+.plot-wrap{width:100%;overflow:hidden}
+svg{width:100%;height:auto;display:block}
+.axis{stroke:#7d8698;stroke-width:1}.grid{stroke:var(--grid);stroke-width:1}.zero{stroke:#aab1bf;stroke-width:1}
+.tick{fill:#70798a;font-size:12px}.label{fill:#475467;font-size:13px;font-weight:650}
+.input-line{fill:none;stroke:var(--orange);stroke-width:2.2}.output-line{fill:none;stroke:var(--blue);stroke-width:3}.steady-line{fill:none;stroke:var(--green);stroke-width:1.7;stroke-dasharray:7 5}
+.tau-line{stroke:#98a2b3;stroke-width:1.2;stroke-dasharray:4 5}.tau-point{fill:#fff;stroke:var(--purple);stroke-width:2.3}
+.normal-line{fill:none;stroke:var(--purple);stroke-width:3}
+.legend{display:flex;flex-wrap:wrap;gap:12px 18px;margin:4px 0 10px;font-size:.88rem;color:#475467}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px;background:currentColor}
+.legend .input{color:var(--orange)}.legend .output{color:var(--blue)}.legend .steady{color:var(--green)}
+.formula-box{margin-top:10px;padding:12px 14px;border:1px solid #d8def0;border-radius:10px;background:#f8faff}
+.formula-title{font-size:.8rem;color:var(--muted);font-weight:700;margin-bottom:4px}
+.formula{font-family:"Cambria Math","Times New Roman",serif;font-size:1.08rem}
+.tau-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:12px 0 6px}
+.tau-item{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfcff;text-align:center}
+.tau-item strong{display:block;font-size:1.1rem;color:var(--purple)}
+.tau-item span{display:block;font-size:.86rem;font-weight:700;margin:3px 0}
+.tau-item small{display:block;color:var(--muted);line-height:1.3}
+.concept-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.concept{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcff}
+.concept-symbol{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#eef4ff;color:#214f91;font-family:"Cambria Math","Times New Roman",serif;font-size:1.2rem;font-weight:700}
+.concept h3{margin:9px 0 5px;font-size:.98rem}.concept p{margin:0;color:#475467;line-height:1.48;font-size:.9rem}
+.takeaway{margin-top:12px;border-left:4px solid var(--purple);background:#f8f5ff;padding:11px 13px;border-radius:8px;line-height:1.55}
+footer{padding:8px 2px 22px}footer a{color:#214f91;text-decoration:none;font-weight:650}
+@media(max-width:820px){.controls,.stats{grid-template-columns:repeat(2,minmax(150px,1fr))}.tau-grid{grid-template-columns:repeat(3,1fr)}.concept-grid{grid-template-columns:1fr}}
+@media(max-width:520px){main{padding:12px}.controls{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.tau-grid{grid-template-columns:1fr 1fr}}
