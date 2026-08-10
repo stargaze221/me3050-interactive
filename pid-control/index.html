@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ME 3050 — PID Control Explorer</title><link rel="stylesheet" href="styles.css">
+</head>
+<body><main>
+<section class="hero">
+ <div class="eyebrow">ME 3050 — Dynamic Modeling and Controls</div>
+ <h1>PID Control Explorer</h1>
+ <p>Tune a controller around a first-order plant and see how proportional, integral, and derivative action change tracking and control effort.</p>
+ <div class="equation">Plant: τ<sub>p</sub> ẏ + y = K<sub>p</sub>u &nbsp;&nbsp; | &nbsp;&nbsp; Controller: u = K<sub>c</sub>e + K<sub>i</sub>∫e dt − K<sub>d</sub>ẏ</div>
+</section>
+
+<section class="card">
+<h2>Plant and controller</h2>
+<div class="controls">
+ <div class="control"><label for="ctype">Controller type</label><select id="ctype"><option>P</option><option>PI</option><option>PD</option><option selected>PID</option></select></div>
+ <div class="control"><label for="plantGain">Plant gain Kₚ <span class="value" id="plantGainVal"></span></label><input id="plantGain" type="range" min="0.5" max="2" step="0.05" value="1"></div>
+ <div class="control"><label for="plantTau">Plant time constant τₚ <span class="value" id="plantTauVal"></span></label><input id="plantTau" type="range" min="0.2" max="3" step="0.05" value="1"></div>
+ <div class="control"><label for="kc">Proportional Kc <span class="value" id="kcVal"></span></label><input id="kc" type="range" min="0" max="8" step="0.1" value="2"></div>
+ <div class="control integral"><label for="ki">Integral Ki <span class="value" id="kiVal"></span></label><input id="ki" type="range" min="0" max="8" step="0.1" value="1"></div>
+ <div class="control derivative"><label for="kd">Derivative Kd <span class="value" id="kdVal"></span></label><input id="kd" type="range" min="0" max="3" step="0.05" value="0.3"></div>
+</div>
+<div class="preset-row">
+ <button data-type="P" data-kc="2" data-ki="0" data-kd="0">P: simple</button>
+ <button data-type="PI" data-kc="2" data-ki="1" data-kd="0">PI: remove offset</button>
+ <button data-type="PID" data-kc="2.5" data-ki="1.2" data-kd="0.4">PID: balanced</button>
+ <button data-type="PID" data-kc="5" data-ki="4" data-kd="0.05">Aggressive</button>
+</div>
+<div class="stats">
+ <div class="stat"><div class="k">Steady-state error</div><div class="v" id="sseStat"></div></div>
+ <div class="stat"><div class="k">Overshoot vs setpoint</div><div class="v" id="osStat"></div></div>
+ <div class="stat"><div class="k">2% settling time</div><div class="v" id="tsStat"></div></div>
+ <div class="stat"><div class="k">Peak |control effort|</div><div class="v" id="uPeakStat"></div></div>
+</div>
+</section>
+
+<section class="card">
+<h2>1. Closed-loop tracking</h2>
+<div class="legend"><span class="setpoint">setpoint r(t)</span><span class="output">output y(t)</span><span class="band">±2% band</span></div>
+<div class="plot-wrap"><svg id="responsePlot" viewBox="0 0 1000 470" role="img" aria-label="Closed-loop step response"></svg></div>
+</section>
+
+<section class="card">
+<h2>2. Control effort</h2>
+<p class="lead">Better tracking is not free. More aggressive gains often demand a larger or faster actuator command.</p>
+<div class="plot-wrap"><svg id="controlPlot" viewBox="0 0 1000 380" role="img" aria-label="PID control effort"></svg></div>
+</section>
+
+<section class="card">
+<h2>3. What each term contributes</h2>
+<div class="concept-grid">
+ <div class="concept"><div class="symbol">P</div><h3>Proportional: react to present error</h3><p>Increasing Kc generally speeds the response and reduces offset, but P-only control of this plant still has nonzero steady-state error.</p></div>
+ <div class="concept"><div class="symbol">I</div><h3>Integral: remember accumulated error</h3><p>Integral action drives constant step-tracking error toward zero, but too much Ki can increase overshoot and oscillatory behavior.</p></div>
+ <div class="concept"><div class="symbol">D</div><h3>Derivative: respond to motion</h3><p>Derivative action adds damping by reacting to output rate, often reducing overshoot while increasing sensitivity to rapid measurement changes.</p></div>
+</div>
+<div class="takeaway" id="controllerFormula"></div>
+</section>
+
+<section class="card">
+<h2>4. A tuning experiment</h2>
+<p class="lead"><strong>Try this sequence:</strong> select P and adjust Kc. Then switch to PI and increase Ki until the offset disappears at an acceptable speed. Finally add Kd and see whether you can reduce overshoot without slowing the response too much.</p>
+</section>
+<footer><a href="../">← ME 3050 Interactive Explorers</a></footer>
+</main><script src="app.js"></script></body></html>
