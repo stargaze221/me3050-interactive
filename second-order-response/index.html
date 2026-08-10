@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ME 3050 — Second-Order Response Explorer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="eyebrow">ME 3050 — Dynamic Modeling and Controls</div>
+    <h1>Second-Order Response Explorer</h1>
+    <p>Explore how natural frequency and damping ratio determine the speed and character of a second-order response.</p>
+    <div class="equation">ÿ + 2ζω<sub>n</sub>ẏ + ω<sub>n</sub><sup>2</sup>y = Kω<sub>n</sub><sup>2</sup>u(t)</div>
+  </section>
+
+  <section class="card">
+    <h2>System and input</h2>
+    <div class="controls">
+      <div class="control primary-control">
+        <label for="wn">Natural frequency ω<sub>n</sub> <span id="wnVal" class="value"></span></label>
+        <input id="wn" type="range" min="0.5" max="8" step="0.1" value="2">
+      </div>
+      <div class="control primary-control">
+        <label for="zeta">Damping ratio ζ <span id="zetaVal" class="value"></span></label>
+        <input id="zeta" type="range" min="0" max="2" step="0.02" value="0.5">
+      </div>
+      <div class="control">
+        <label for="gain">System gain K <span id="gainVal" class="value"></span></label>
+        <input id="gain" type="range" min="0.25" max="2" step="0.05" value="1">
+      </div>
+      <div class="control">
+        <label for="stepAmp">Step amplitude U₀ <span id="stepVal" class="value"></span></label>
+        <input id="stepAmp" type="range" min="0.25" max="2" step="0.05" value="1">
+      </div>
+    </div>
+
+    <div class="preset-row">
+      <span class="preset-label">Quick damping cases:</span>
+      <button data-zeta="0.2">ζ = 0.2</button>
+      <button data-zeta="0.5">ζ = 0.5</button>
+      <button data-zeta="0.7">ζ = 0.7</button>
+      <button data-zeta="1.0">ζ = 1.0</button>
+      <button data-zeta="1.5">ζ = 1.5</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="k">Response type</div><div class="v" id="regimeStat"></div></div>
+      <div class="stat"><div class="k">Steady-state output</div><div class="v" id="steadyStat"></div></div>
+      <div class="stat"><div class="k">Damped frequency ω<sub>d</sub></div><div class="v" id="wdStat"></div></div>
+      <div class="stat"><div class="k">Poles</div><div class="v compact" id="poleStat"></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>1. Step response</h2>
+    <div class="legend">
+      <span class="output">Output y(t)</span>
+      <span class="steady">Steady state KU₀</span>
+      <span class="band">±2% settling band</span>
+    </div>
+    <div class="plot-wrap">
+      <svg id="responsePlot" viewBox="0 0 1000 500" role="img" aria-label="Second-order step response"></svg>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric"><div class="metric-label">Percent overshoot</div><div class="metric-value" id="overshootMetric"></div><div class="metric-note" id="overshootNote"></div></div>
+      <div class="metric"><div class="metric-label">Peak time</div><div class="metric-value" id="peakMetric"></div><div class="metric-note">First peak after the step</div></div>
+      <div class="metric"><div class="metric-label">2% settling time</div><div class="metric-value" id="settlingMetric"></div><div class="metric-note">Computed from the displayed response</div></div>
+      <div class="metric"><div class="metric-label">Rise time</div><div class="metric-value" id="riseMetric"></div><div class="metric-note">10% → 90% of final value</div></div>
+    </div>
+  </section>
+
+  <section class="two-column">
+    <section class="card">
+      <h2>2. Pole locations</h2>
+      <p class="lead">The same ω<sub>n</sub> and ζ that shape the time response also place the poles in the s-plane.</p>
+      <div class="plot-wrap">
+        <svg id="polePlot" viewBox="0 0 620 520" role="img" aria-label="Second-order poles in the complex plane"></svg>
+      </div>
+      <div class="formula-box">
+        <div class="formula-title">Characteristic equation</div>
+        <div class="formula">s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>² = 0</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Read the parameters physically</h2>
+      <div class="concept-stack">
+        <div class="concept">
+          <div class="concept-symbol">ω<sub>n</sub></div>
+          <div><h3>Natural frequency sets the time scale</h3><p>With ζ held fixed, larger ω<sub>n</sub> moves the poles farther from the origin and makes the response faster.</p></div>
+        </div>
+        <div class="concept">
+          <div class="concept-symbol">ζ</div>
+          <div><h3>Damping ratio sets the response character</h3><p>Low ζ allows oscillation and overshoot. ζ = 1 is critical damping. ζ &gt; 1 gives a nonoscillatory overdamped response.</p></div>
+        </div>
+        <div class="concept">
+          <div class="concept-symbol">K</div>
+          <div><h3>Gain sets the final scale</h3><p>For a constant step input, the steady-state output is y<sub>ss</sub> = KU₀.</p></div>
+        </div>
+      </div>
+
+      <div class="challenge">
+        <strong>Try this sequence</strong>
+        <ol>
+          <li>Fix ω<sub>n</sub> and move ζ from 0.2 to 1.5.</li>
+          <li>Fix ζ = 0.5 and double ω<sub>n</sub>.</li>
+          <li>Watch both the time response and the poles move.</li>
+        </ol>
+      </div>
+    </section>
+  </section>
+
+  <section class="card">
+    <h2>4. Damping regimes at a glance</h2>
+    <div class="regime-grid">
+      <div class="regime"><strong>ζ = 0</strong><span>Undamped</span><small>Sustained oscillation; poles on the imaginary axis.</small></div>
+      <div class="regime"><strong>0 &lt; ζ &lt; 1</strong><span>Underdamped</span><small>Decaying oscillation; complex-conjugate poles.</small></div>
+      <div class="regime"><strong>ζ = 1</strong><span>Critically damped</span><small>Fastest nonoscillatory return for this standard form.</small></div>
+      <div class="regime"><strong>ζ &gt; 1</strong><span>Overdamped</span><small>Two real negative poles; slower nonoscillatory response.</small></div>
+    </div>
+  </section>
+
+  <footer><a href="../">← ME 3050 Interactive Explorers</a></footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
