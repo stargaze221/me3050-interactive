@@ -7,7 +7,7 @@ function E(tag,a={},t=null){const e=document.createElementNS(NS,tag);for(const[k
 function clear(s){while(s.firstChild)s.removeChild(s.firstChild)}
 function fmt(v,d=2){return Number(v).toFixed(d)}
 function p(){return{type:systemType.value,K:+gain.value,tau:+tau.value,wn:+wn.value,zeta:+zeta.value,w:Math.pow(10,+logw.value)}}
-function H(w,q){if(q.type==="first"){const x=w*q.tau,den=1+x*x;return{re:q.K/den,im:-q.K*x/den}}const re=q.wn*q.wn-w*w, im=2*q.zeta*q.wn*w, den=re*re+im*im;return{re:q.K*q.wn*q.wn*re/den,im:-q.K*q.wn*q.wn*im/den}}
+function frequencyResponse(w,q){if(q.type==="first"){const x=w*q.tau,den=1+x*x;return{re:q.K/den,im:-q.K*x/den}}const re=q.wn*q.wn-w*w, im=2*q.zeta*q.wn*w, den=re*re+im*im;return{re:q.K*q.wn*q.wn*re/den,im:-q.K*q.wn*q.wn*im/den}}
 function mp(h){return{mag:Math.hypot(h.re,h.im),phase:Math.atan2(h.im,h.re)*180/Math.PI}}
 function logspace(a,b,n){return Array.from({length:n},(_,i)=>Math.pow(10,a+(b-a)*i/(n-1)))}
 function path(points,x,y){return points.map((q,i)=>(i?"L":"M")+x(q.x).toFixed(2)+","+y(q.y).toFixed(2)).join(" ")}
@@ -21,7 +21,7 @@ function axes(svg,xmin,xmax,ymin,ymax,box,xlab,ylab,xticks,yticks){
  return{x,y}
 }
 function drawBode(q){
- clear(bode);const W=1000,H=650,l=70,r=25;const freqs=logspace(-1.5,1.7,500);const data=freqs.map(w=>{const m=mp(H(w,q));return{w,db:20*Math.log10(m.mag),ph:m.phase}});
+ clear(bode);const W=1000,H=650,l=70,r=25;const freqs=logspace(-1.5,1.7,500);const data=freqs.map(w=>{const m=mp(frequencyResponse(w,q));return{w,db:20*Math.log10(m.mag),ph:m.phase}});
  let dmin=Math.min(-40,...data.map(d=>d.db)),dmax=Math.max(10,...data.map(d=>d.db));dmin=Math.floor(dmin/10)*10-5;dmax=Math.ceil(dmax/10)*10+5;
  const xt=[.05,.1,.2,.5,1,2,5,10,20,50].filter(x=>x>=freqs[0]&&x<=freqs.at(-1));
  const top={W,H:315,l,r,t:20,b:45}, bot={W,H:650,l,r,t:345,b:25};
@@ -29,13 +29,13 @@ function drawBode(q){
  const B=axes(bode,freqs[0],freqs.at(-1),-190,10,bot,"ω (rad/s)","Phase (deg)",xt,[0,-45,-90,-135,-180]);
  bode.appendChild(E("path",{d:path(data.map(d=>({x:d.w,y:d.db})),A.x,A.y),class:"mag-line"}));
  bode.appendChild(E("path",{d:path(data.map(d=>({x:d.w,y:d.ph})),B.x,B.y),class:"phase-line"}));
- const cur=mp(H(q.w,q));[A,B].forEach((S,i)=>bode.appendChild(E("line",{x1:S.x(q.w),y1:i?345:20,x2:S.x(q.w),y2:i?625:270,class:"selected-line"})));
+ const cur=mp(frequencyResponse(q.w,q));[A,B].forEach((S,i)=>bode.appendChild(E("line",{x1:S.x(q.w),y1:i?345:20,x2:S.x(q.w),y2:i?625:270,class:"selected-line"})));
  bode.appendChild(E("circle",{cx:A.x(q.w),cy:A.y(20*Math.log10(cur.mag)),r:4.5,class:"selected-dot-mag"}));
  bode.appendChild(E("circle",{cx:B.x(q.w),cy:B.y(cur.phase),r:4.5,class:"selected-dot-phase"}));
 }
 function drawSine(q){
  clear(sine);const W=1000,H=440,M={l:70,r:25,t:20,b:55},pw=W-M.l-M.r,ph=H-M.t-M.b;
- const cur=mp(H(q.w,q)),period=2*Math.PI/q.w,tEnd=3*period;
+ const cur=mp(frequencyResponse(q.w,q)),period=2*Math.PI/q.w,tEnd=3*period;
  const pts=Array.from({length:700},(_,i)=>{const t=tEnd*i/699;return{t,u:Math.sin(q.w*t),y:cur.mag*Math.sin(q.w*t+cur.phase*Math.PI/180)}});
  let ymin=Math.min(-1,...pts.map(a=>a.y)),ymax=Math.max(1,...pts.map(a=>a.y));const pad=.15*(ymax-ymin);ymin-=pad;ymax+=pad;
  const x=t=>M.l+t/tEnd*pw,y=v=>M.t+(ymax-v)/(ymax-ymin)*ph;
@@ -47,7 +47,7 @@ function drawSine(q){
  sine.appendChild(E("text",{x:M.l+12,y:M.t+18,class:"axislabel"},"blue: input u(t)     green: output y(t)"))
 }
 function render(){
- const q=p(),cur=mp(H(q.w,q));
+ const q=p(),cur=mp(frequencyResponse(q.w,q));
  document.querySelectorAll(".first-only").forEach(e=>e.classList.toggle("hidden",q.type!=="first"));document.querySelectorAll(".second-only").forEach(e=>e.classList.toggle("hidden",q.type!=="second"));
  document.querySelector(".first-concept").classList.toggle("hidden",q.type!=="first");document.querySelector(".second-concept").classList.toggle("hidden",q.type!=="second");
  $("gainVal").textContent=fmt(q.K,2);$("tauVal").textContent=fmt(q.tau,2)+" s";$("wnVal").textContent=fmt(q.wn,2)+" rad/s";$("zetaVal").textContent=fmt(q.zeta,2);$("omegaVal").textContent=fmt(q.w,q.w<1?2:1)+" rad/s";
