@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ME 3050 — First-Order Response Explorer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="eyebrow">ME 3050 — Dynamic Modeling and Controls</div>
+    <h1>First-Order Response Explorer</h1>
+    <p>Explore how gain, time constant, input magnitude, and initial condition shape the response of a first-order system.</p>
+    <div class="equation">τ ẏ(t) + y(t) = K u(t)</div>
+  </section>
+
+  <section class="card">
+    <h2>System and input</h2>
+    <div class="controls">
+      <div class="control">
+        <label for="gain">System gain K <span id="gainVal" class="value"></span></label>
+        <input id="gain" type="range" min="0.25" max="3" step="0.05" value="1">
+      </div>
+      <div class="control">
+        <label for="tau">Time constant τ <span id="tauVal" class="value"></span></label>
+        <input id="tau" type="range" min="0.1" max="3" step="0.05" value="1">
+      </div>
+      <div class="control">
+        <label for="inputAmp">Step amplitude U₀ <span id="inputVal" class="value"></span></label>
+        <input id="inputAmp" type="range" min="-2" max="2" step="0.1" value="1">
+      </div>
+      <div class="control">
+        <label for="initial">Initial output y(0) <span id="initialVal" class="value"></span></label>
+        <input id="initial" type="range" min="-2" max="2" step="0.1" value="0">
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="k">Steady-state output</div><div class="v" id="steadyStat"></div></div>
+      <div class="stat"><div class="k">Time constant</div><div class="v" id="tauStat"></div></div>
+      <div class="stat"><div class="k">≈ 2% settling time</div><div class="v" id="settleStat"></div></div>
+      <div class="stat"><div class="k">Initial error to steady state</div><div class="v" id="errorStat"></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>1. Step input and output response</h2>
+    <div class="legend">
+      <span class="input">Step input u(t)</span>
+      <span class="output">Output y(t)</span>
+      <span class="steady">Steady-state value KU₀</span>
+    </div>
+    <div class="plot-wrap">
+      <svg id="mainPlot" viewBox="0 0 1000 500" role="img" aria-label="First-order step response"></svg>
+    </div>
+    <div class="formula-box">
+      <div class="formula-title">Exact response for a constant step input</div>
+      <div class="formula">y(t) = KU₀ + [y(0) − KU₀] e<sup>−t/τ</sup></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. What does the time constant mean?</h2>
+    <p class="lead">The transient error decays exponentially. After each time constant, only about 36.8% of the previous error remains.</p>
+
+    <div class="tau-grid">
+      <div class="tau-item"><strong>1τ</strong><span>63.2% complete</span><small>36.8% error remains</small></div>
+      <div class="tau-item"><strong>2τ</strong><span>86.5% complete</span><small>13.5% error remains</small></div>
+      <div class="tau-item"><strong>3τ</strong><span>95.0% complete</span><small>5.0% error remains</small></div>
+      <div class="tau-item"><strong>4τ</strong><span>98.2% complete</span><small>1.8% error remains</small></div>
+      <div class="tau-item"><strong>5τ</strong><span>99.3% complete</span><small>0.7% error remains</small></div>
+    </div>
+
+    <div class="plot-wrap">
+      <svg id="normalizedPlot" viewBox="0 0 1000 410" role="img" aria-label="Normalized first-order response versus time constants"></svg>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. Separate steady-state behavior from transient behavior</h2>
+    <div class="concept-grid">
+      <div class="concept">
+        <div class="concept-symbol">K</div>
+        <h3>Gain sets the scale</h3>
+        <p>For a constant input, the final output is <strong>y<sub>ss</sub> = KU₀</strong>.</p>
+      </div>
+      <div class="concept">
+        <div class="concept-symbol">τ</div>
+        <h3>Time constant sets the speed</h3>
+        <p>A larger τ gives a slower response. A smaller τ gives a faster response.</p>
+      </div>
+      <div class="concept">
+        <div class="concept-symbol">y₀</div>
+        <h3>Initial condition sets the transient</h3>
+        <p>The initial condition changes the starting point, but a stable first-order system still approaches the same steady state.</p>
+      </div>
+    </div>
+
+    <div class="takeaway">
+      <strong>Try this:</strong> keep K and U₀ fixed and move only τ. Then keep τ fixed and move only K. The graph separates “how fast?” from “how far?”.
+    </div>
+  </section>
+
+  <footer>
+    <a href="../">← ME 3050 Interactive Explorers</a>
+  </footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
