@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ME 3050 — State-Space and Stability Explorer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body><main>
+<section class="hero">
+  <div class="eyebrow">ME 3050 — Dynamic Modeling and Controls</div>
+  <h1>State-Space & Stability Explorer</h1>
+  <p>Watch the same second-order dynamics simultaneously as state equations, eigenvalues, a phase-plane trajectory, and time histories.</p>
+  <div class="equation">ẋ = Ax, &nbsp; x = [x₁ &nbsp; x₂]ᵀ, &nbsp; A = [[0, 1], [−ωₙ², −2ζωₙ]]</div>
+</section>
+
+<section class="card">
+<h2>System and initial state</h2>
+<div class="controls">
+ <div class="control"><label for="wn">Natural frequency ωₙ <span class="value" id="wnVal"></span></label><input id="wn" type="range" min="0.5" max="5" step="0.1" value="2"></div>
+ <div class="control"><label for="zeta">Damping ratio ζ <span class="value" id="zetaVal"></span></label><input id="zeta" type="range" min="-0.5" max="1.5" step="0.05" value="0.3"></div>
+ <div class="control"><label for="x10">Initial x₁(0) <span class="value" id="x10Val"></span></label><input id="x10" type="range" min="-2" max="2" step="0.1" value="1"></div>
+ <div class="control"><label for="x20">Initial x₂(0) <span class="value" id="x20Val"></span></label><input id="x20" type="range" min="-4" max="4" step="0.1" value="0"></div>
+</div>
+<div class="preset-row">
+ <button data-z="-0.25">Unstable ζ = −0.25</button><button data-z="0">Marginal ζ = 0</button><button data-z="0.3">Stable spiral ζ = 0.3</button><button data-z="1">Critical ζ = 1</button><button data-z="1.4">Stable node ζ = 1.4</button>
+</div>
+<div class="stats">
+ <div class="stat"><div class="k">Stability</div><div class="v" id="stabilityStat"></div></div>
+ <div class="stat"><div class="k">Eigenvalue λ₁</div><div class="v" id="eig1Stat"></div></div>
+ <div class="stat"><div class="k">Eigenvalue λ₂</div><div class="v" id="eig2Stat"></div></div>
+ <div class="stat"><div class="k">Trace / determinant</div><div class="v" id="traceDetStat"></div></div>
+</div>
+</section>
+
+<section class="card">
+<h2>1. State matrix and eigenvalues</h2>
+<div class="matrix-row">
+ <div><div class="mini-title">State equation</div><div class="matrix" id="matrixA"></div></div>
+ <div class="arrow">→</div>
+ <div><div class="mini-title">Eigenvalues of A</div><div class="eigen-box" id="eigenBox"></div></div>
+</div>
+<div class="takeaway" id="stabilityMessage"></div>
+</section>
+
+<section class="card">
+<h2>2. Phase plane: how the state moves</h2>
+<p class="lead">The gray field shows local state velocity. The colored curve is the trajectory from the selected initial condition toward—or away from—the equilibrium at the origin.</p>
+<div class="plot-wrap"><svg id="phasePlot" viewBox="0 0 760 620" role="img" aria-label="State-space phase portrait"></svg></div>
+</section>
+
+<section class="card">
+<h2>3. The same trajectory as time histories</h2>
+<div class="legend"><span class="x1">x₁(t)</span><span class="x2">x₂(t)</span></div>
+<div class="plot-wrap"><svg id="timePlot" viewBox="0 0 1000 460" role="img" aria-label="State time histories"></svg></div>
+</section>
+
+<section class="card">
+<h2>4. Connect pole location to motion</h2>
+<div class="concept-grid">
+ <div class="concept"><div class="symbol">Re(λ)&lt;0</div><h3>Stable</h3><p>State trajectories contract toward the equilibrium. Negative real parts produce exponential decay.</p></div>
+ <div class="concept"><div class="symbol">Im(λ)≠0</div><h3>Oscillatory</h3><p>Complex-conjugate eigenvalues create rotation in the phase plane and oscillation in time.</p></div>
+ <div class="concept"><div class="symbol">Re(λ)&gt;0</div><h3>Unstable</h3><p>At least one growing mode drives trajectories away from equilibrium.</p></div>
+</div>
+</section>
+<footer><a href="../">← ME 3050 Interactive Explorers</a></footer>
+</main><script src="app.js"></script></body></html>

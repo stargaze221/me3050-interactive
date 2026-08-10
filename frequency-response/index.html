@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ME 3050 — Frequency Response Explorer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="eyebrow">ME 3050 — Dynamic Modeling and Controls</div>
+    <h1>Frequency Response Explorer</h1>
+    <p>Connect a transfer function to sinusoidal steady-state response, Bode magnitude, and phase.</p>
+    <div class="equation">u(t)=sin(ωt) &nbsp; → &nbsp; y<sub>ss</sub>(t)=|G(jω)| sin[ωt+∠G(jω)]</div>
+  </section>
+
+  <section class="card">
+    <h2>System and excitation</h2>
+    <div class="controls">
+      <div class="control">
+        <label for="systemType">System model</label>
+        <select id="systemType">
+          <option value="first">First order: K/(τs+1)</option>
+          <option value="second">Second order: Kωₙ²/(s²+2ζωₙs+ωₙ²)</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="gain">Gain K <span class="value" id="gainVal"></span></label>
+        <input id="gain" type="range" min="0.25" max="3" step="0.05" value="1">
+      </div>
+      <div class="control first-only">
+        <label for="tau">Time constant τ <span class="value" id="tauVal"></span></label>
+        <input id="tau" type="range" min="0.1" max="3" step="0.05" value="1">
+      </div>
+      <div class="control second-only">
+        <label for="wn">Natural frequency ωₙ <span class="value" id="wnVal"></span></label>
+        <input id="wn" type="range" min="0.5" max="8" step="0.1" value="2">
+      </div>
+      <div class="control second-only">
+        <label for="zeta">Damping ratio ζ <span class="value" id="zetaVal"></span></label>
+        <input id="zeta" type="range" min="0.05" max="2" step="0.05" value="0.5">
+      </div>
+      <div class="control">
+        <label for="logw">Excitation frequency ω <span class="value" id="omegaVal"></span></label>
+        <input id="logw" type="range" min="-1.5" max="1.7" step="0.01" value="0">
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Magnitude |G(jω)|</div><div class="v" id="magStat"></div></div>
+      <div class="stat"><div class="k">Magnitude</div><div class="v" id="dbStat"></div></div>
+      <div class="stat"><div class="k">Phase</div><div class="v" id="phaseStat"></div></div>
+      <div class="stat"><div class="k">Input period</div><div class="v" id="periodStat"></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>1. Bode magnitude and phase</h2>
+    <p class="lead">Move the excitation-frequency slider. The vertical marker follows the operating point on both Bode plots.</p>
+    <div class="legend">
+      <span class="mag">Magnitude</span><span class="phase">Phase</span><span class="marker">Selected ω</span>
+    </div>
+    <div class="plot-wrap"><svg id="bodePlot" viewBox="0 0 1000 650" role="img" aria-label="Bode magnitude and phase plots"></svg></div>
+  </section>
+
+  <section class="card">
+    <h2>2. What does one Bode point mean in time?</h2>
+    <p class="lead">At the selected frequency, the output has the <strong>same frequency</strong> as the input but a different amplitude and phase.</p>
+    <div class="plot-wrap"><svg id="sinePlot" viewBox="0 0 1000 440" role="img" aria-label="Input and steady-state output sine waves"></svg></div>
+    <div class="formula-box" id="pointFormula"></div>
+  </section>
+
+  <section class="card">
+    <h2>3. Read the characteristic frequency</h2>
+    <div class="concept-grid">
+      <div class="concept first-concept">
+        <div class="symbol">1/τ</div>
+        <h3>First-order corner frequency</h3>
+        <p>Near ω = 1/τ, the response begins its transition toward the −20 dB/decade high-frequency slope and phase lag approaches −45°.</p>
+      </div>
+      <div class="concept second-concept">
+        <div class="symbol">ωₙ</div>
+        <h3>Second-order natural frequency</h3>
+        <p>Near ωₙ, damping determines whether the magnitude has a resonant peak and how rapidly phase changes toward −180°.</p>
+      </div>
+      <div class="concept">
+        <div class="symbol">jω</div>
+        <h3>Frequency response is the transfer function on the imaginary axis</h3>
+        <p>Evaluating G(s) at s = jω directly gives the sinusoidal steady-state magnitude ratio and phase shift.</p>
+      </div>
+    </div>
+  </section>
+  <footer><a href="../">← ME 3050 Interactive Explorers</a></footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
