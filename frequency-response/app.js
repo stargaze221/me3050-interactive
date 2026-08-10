@@ -24,12 +24,12 @@ function drawBode(q){
  clear(bode);const W=1000,H=650,l=70,r=25;const freqs=logspace(-1.5,1.7,500);const data=freqs.map(w=>{const m=mp(H(w,q));return{w,db:20*Math.log10(m.mag),ph:m.phase}});
  let dmin=Math.min(-40,...data.map(d=>d.db)),dmax=Math.max(10,...data.map(d=>d.db));dmin=Math.floor(dmin/10)*10-5;dmax=Math.ceil(dmax/10)*10+5;
  const xt=[.05,.1,.2,.5,1,2,5,10,20,50].filter(x=>x>=freqs[0]&&x<=freqs.at(-1));
- const top={W,H:315,l,r,t:20,b:45}, bot={W,H:315,l,r,t:345,b:-5};
+ const top={W,H:315,l,r,t:20,b:45}, bot={W,H:650,l,r,t:345,b:25};
  const A=axes(bode,freqs[0],freqs.at(-1),dmin,dmax,top,"ω (rad/s)","Magnitude (dB)",xt,[...Array(Math.ceil((dmax-dmin)/20)+1)].map((_,i)=>Math.ceil(dmin/20)*20+i*20).filter(v=>v<=dmax));
  const B=axes(bode,freqs[0],freqs.at(-1),-190,10,bot,"ω (rad/s)","Phase (deg)",xt,[0,-45,-90,-135,-180]);
  bode.appendChild(E("path",{d:path(data.map(d=>({x:d.w,y:d.db})),A.x,A.y),class:"mag-line"}));
  bode.appendChild(E("path",{d:path(data.map(d=>({x:d.w,y:d.ph})),B.x,B.y),class:"phase-line"}));
- const cur=mp(H(q.w,q));[A,B].forEach((S,i)=>bode.appendChild(E("line",{x1:S.x(q.w),y1:i?345:20,x2:S.x(q.w),y2:i?650:270,class:"selected-line"})));
+ const cur=mp(H(q.w,q));[A,B].forEach((S,i)=>bode.appendChild(E("line",{x1:S.x(q.w),y1:i?345:20,x2:S.x(q.w),y2:i?625:270,class:"selected-line"})));
  bode.appendChild(E("circle",{cx:A.x(q.w),cy:A.y(20*Math.log10(cur.mag)),r:4.5,class:"selected-dot-mag"}));
  bode.appendChild(E("circle",{cx:B.x(q.w),cy:B.y(cur.phase),r:4.5,class:"selected-dot-phase"}));
 }
