@@ -8,7 +8,7 @@
 <section class="hero">
  <div class="eyebrow">ME 3050 — Dynamic Modeling and Controls</div>
  <h1>PID Control Explorer</h1>
- <p>Tune P, PI, PD, and PID control around a second-order plant. Watch tracking, damping, overshoot, stability, and actuator effort change together.</p>
+ <p>Tune P, PI, PD, and PID control around a second-order plant. Connect time response, closed-loop poles, root locus, and frequency-domain stability margins.</p>
  <div class="equation">Plant: G(s) = K<sub>p</sub>ω<sub>n</sub><sup>2</sup> / (s<sup>2</sup> + 2ζω<sub>n</sub>s + ω<sub>n</sub><sup>2</sup>) &nbsp;&nbsp; | &nbsp;&nbsp; u = K<sub>c</sub>e + K<sub>i</sub>∫e dt − K<sub>d</sub>ẏ</div>
 </section>
 
@@ -52,18 +52,42 @@
 </section>
 
 <section class="card">
-<h2>3. What each term contributes</h2>
+<h2>3. Root locus: where can the closed-loop poles go?</h2>
+<p class="lead">The current controller shape is held fixed while a common multiplier α scales all active controller gains together: (Kc, Ki, Kd) → α(Kc, Ki, Kd). The highlighted poles are the current tuning at <strong>α = 1</strong>.</p>
+<div class="legend rl-legend">
+ <span class="locus">root locus</span><span class="open-pole">open-loop poles</span><span class="open-zero">open-loop zeros</span><span class="current-pole">current closed-loop poles</span>
+</div>
+<div class="plot-wrap"><svg id="rootLocusPlot" viewBox="0 0 1000 520" role="img" aria-label="Root locus and current closed-loop poles"></svg></div>
+<div class="takeaway" id="rootLocusNote"></div>
+</section>
+
+<section class="card">
+<h2>4. Open-loop Bode plot and stability margins</h2>
+<p class="lead">Gain margin and phase margin come from the open-loop transfer function L(jω) = C(jω)G(jω) using the <strong>current controller gains</strong>. The 0 dB and −180° crossings show how close the loop is to the classical instability boundary.</p>
+<div class="stats margins">
+ <div class="stat"><div class="k">Gain crossover ωgc</div><div class="v" id="gcStat"></div></div>
+ <div class="stat"><div class="k">Phase margin</div><div class="v" id="pmStat"></div></div>
+ <div class="stat"><div class="k">Phase crossover ωpc</div><div class="v" id="pcStat"></div></div>
+ <div class="stat"><div class="k">Gain margin</div><div class="v" id="gmStat"></div></div>
+</div>
+<div class="legend margin-legend"><span class="mag">|L(jω)|</span><span class="phase">∠L(jω)</span><span class="pm">phase-margin crossover</span><span class="gm">gain-margin crossover</span></div>
+<div class="plot-wrap"><svg id="marginPlot" viewBox="0 0 1000 650" role="img" aria-label="Open-loop Bode magnitude and phase with gain and phase margins"></svg></div>
+<div class="takeaway" id="marginNote"></div>
+</section>
+
+<section class="card">
+<h2>5. What each term contributes</h2>
 <div class="concept-grid">
- <div class="concept"><div class="symbol">P</div><h3>Proportional: change stiffness and speed</h3><p>Increasing Kc usually makes tracking faster and reduces offset, but it can also increase overshoot. Without integral action, a constant step generally retains steady-state error.</p></div>
- <div class="concept"><div class="symbol">I</div><h3>Integral: remove offset, but add a pole</h3><p>Integral action drives constant tracking error toward zero. In a second-order plant it also raises the closed-loop order, so too much Ki can create severe oscillation or instability.</p></div>
- <div class="concept"><div class="symbol">D</div><h3>Derivative: add damping</h3><p>Derivative action reacts to output rate and often suppresses overshoot. Here derivative is taken on the measured output to avoid a derivative kick from a step command.</p></div>
+ <div class="concept"><div class="symbol">P</div><h3>Proportional: change stiffness and speed</h3><p>Increasing Kc usually makes tracking faster and reduces offset, but it can also increase overshoot. On the root locus, changing proportional action shifts the controller shape and therefore the pole paths.</p></div>
+ <div class="concept"><div class="symbol">I</div><h3>Integral: remove offset, but add a pole</h3><p>Integral action drives constant tracking error toward zero. It also adds an open-loop pole at the origin, changes the root locus, and can sharply reduce stability margin if Ki is too large.</p></div>
+ <div class="concept"><div class="symbol">D</div><h3>Derivative: add damping and phase lead</h3><p>Derivative action reacts to output rate, often moving closed-loop poles toward better damping. In the frequency domain it can add phase lead and increase phase margin.</p></div>
 </div>
 <div class="takeaway" id="controllerFormula"></div>
 </section>
 
 <section class="card">
-<h2>4. A tuning experiment</h2>
-<p class="lead"><strong>Try this sequence:</strong> start with the lightly damped plant at ζ = 0.25. Compare P and PD to see derivative damping directly. Then use PI to eliminate offset. Finally switch to PID and balance speed, overshoot, and control effort. Finish with <strong>Too much I</strong> to see that integral action is not automatically stabilizing.</p>
+<h2>6. A tuning experiment</h2>
+<p class="lead"><strong>Try this sequence:</strong> start with ζ = 0.25. Compare P and PD while watching the root locus and phase margin. Then use PI to eliminate offset and notice the added pole at the origin. Finally switch to PID and balance speed, overshoot, control effort, and stability margin. Finish with <strong>Too much I</strong> and watch the root locus cross into the right-half plane while the margins deteriorate.</p>
 </section>
 <footer><a href="../">← ME 3050 Interactive Explorers</a></footer>
 </main><script src="app.js"></script></body></html>
