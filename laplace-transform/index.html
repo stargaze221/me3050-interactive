@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ME 3050 Laplace Transform Explorer — From Pattern Matching to Laplace</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <h1>ME 3050 — Laplace Transform Explorer</h1>
+    <p><strong>Pattern matching → Fourier-like frequency comparison → exponential weighting → Laplace transform</strong></p>
+    <p>
+      Explore how a signal relates to the exponential kernel
+      <span class="eq">e<sup>−st</sup> = e<sup>−σt</sup>e<sup>−jωt</sup></span>.
+    </p>
+  </section>
+
+  <section class="card intro-card">
+    <h2>One idea before the formula</h2>
+    <p>
+      A useful intuition is to treat a transform as a <strong>correlation-like comparison</strong>:
+      multiply the signal by a test pattern and accumulate the result over time.
+    </p>
+    <div class="concept-strip">
+      <div><strong>Signal</strong><span>f(t)</span></div>
+      <div class="arrow">×</div>
+      <div><strong>Exponential pattern</strong><span>e<sup>−st</sup></span></div>
+      <div class="arrow">→</div>
+      <div><strong>Accumulate</strong><span>∫ · dt</span></div>
+      <div class="arrow">→</div>
+      <div><strong>Transform value</strong><span>F(s)</span></div>
+    </div>
+    <p class="small-note">
+      “Correlation-like” is intuition, not a Pearson correlation coefficient. The Laplace transform is a complex integral transform.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Controls</h2>
+    <div class="controls">
+      <div class="control">
+        <label for="omega">Test frequency ω <span class="value" id="omegaVal"></span></label>
+        <input id="omega" type="range" min="0" max="6" step="0.05" value="3">
+      </div>
+      <div class="control">
+        <label for="sigma">Exponential weighting σ <span class="value" id="sigmaVal"></span></label>
+        <input id="sigma" type="range" min="0" max="1.5" step="0.05" value="0">
+      </div>
+    </div>
+    <div class="preset-row">
+      <button id="fourierBtn" type="button">σ = 0: frequency only</button>
+      <button id="laplaceBtn" type="button">Add exponential weighting</button>
+      <button id="matchBtn" type="button">Match the signal frequency</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Re F<sub>T</sub>(s)</div><div class="v" id="reStat"></div></div>
+      <div class="stat"><div class="k">Im F<sub>T</sub>(s)</div><div class="v" id="imStat"></div></div>
+      <div class="stat"><div class="k">|F<sub>T</sub>(s)|</div><div class="v" id="magStat"></div></div>
+      <div class="stat"><div class="k">Current viewpoint</div><div class="v text" id="viewStat"></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Step 1. Compare the signal with an exponential pattern</h2>
+    <p class="section-lead">
+      The example signal is <span class="formula">f(t) = e<sup>−0.35t</sup> cos(3t)</span>.
+      The graph shows the real part of the test kernel,
+      <span class="formula">e<sup>−σt</sup> cos(ωt)</span>.
+    </p>
+    <div class="legend" aria-hidden="true">
+      <span class="signal">Signal f(t)</span>
+      <span class="kernel">Real kernel e<sup>−σt</sup> cos(ωt)</span>
+    </div>
+    <div class="plot-wrap">
+      <svg id="comparePlot" viewBox="0 0 1000 430" role="img" aria-label="Signal and real part of exponential test kernel"></svg>
+    </div>
+    <div class="note" id="compareNote"></div>
+  </section>
+
+  <section class="card">
+    <h2>Step 2. Multiply and accumulate</h2>
+    <p class="section-lead">
+      The real channel multiplies the signal by <span class="formula">e<sup>−σt</sup> cos(ωt)</span>.
+      Positive and negative contributions can reinforce or cancel as they are accumulated.
+    </p>
+    <div class="legend" aria-hidden="true">
+      <span class="product">Product</span>
+      <span class="running">Running integral</span>
+    </div>
+    <div class="plot-wrap">
+      <svg id="productPlot" viewBox="0 0 1000 430" role="img" aria-label="Product of signal and exponential pattern with running accumulated integral"></svg>
+    </div>
+    <div class="note">
+      The complete Laplace value is complex. A second quadrature channel uses
+      <span class="formula">−e<sup>−σt</sup> sin(ωt)</span>; together the two channels form
+      <span class="formula">F<sub>T</sub>(s)</span>.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Step 3. Scan across frequency</h2>
+    <p class="section-lead">
+      Hold σ fixed and scan ω. The magnitude <span class="formula">|F<sub>T</sub>(σ + jω)|</span>
+      becomes larger where the signal has stronger oscillatory agreement with the test pattern.
+    </p>
+    <div class="legend" aria-hidden="true">
+      <span class="sweep">|F<sub>T</sub>(σ + jω)|</span>
+      <span class="current">Current ω</span>
+      <span class="target">Signal frequency 3 rad/s</span>
+    </div>
+    <div class="plot-wrap">
+      <svg id="sweepPlot" viewBox="0 0 1000 430" role="img" aria-label="Magnitude of finite-time Laplace transform as frequency is scanned"></svg>
+    </div>
+  </section>
+
+  <section class="card bridge-card">
+    <h2>From Fourier intuition to Laplace</h2>
+    <div class="bridge-grid">
+      <div>
+        <h3>Set σ = 0</h3>
+        <p class="math">e<sup>−st</sup> = e<sup>−jωt</sup></p>
+        <p>Only the oscillatory comparison remains. This is the Fourier-like viewpoint.</p>
+      </div>
+      <div>
+        <h3>Allow σ &gt; 0</h3>
+        <p class="math">e<sup>−st</sup> = e<sup>−σt</sup>e<sup>−jωt</sup></p>
+        <p>Now the comparison also includes exponential time weighting. This leads to the Laplace viewpoint.</p>
+      </div>
+    </div>
+    <div class="definition">
+      <div class="definition-label">Laplace transform</div>
+      <div class="definition-formula">F(s) = ∫<sub>0</sub><sup>∞</sup> f(t)e<sup>−st</sup> dt, &nbsp; s = σ + jω</div>
+    </div>
+    <div class="note payoff">
+      <strong>Engineering payoff:</strong> this transform is not only a way to represent signals.
+      For linear dynamic systems it turns derivatives into algebraic terms, for example
+      <span class="formula">ℒ{ẋ(t)} = sX(s) − x(0)</span>.
+    </div>
+  </section>
+</main>
+<script src="app.js" defer></script>
+</body>
+</html>
