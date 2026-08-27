@@ -3,37 +3,41 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ME 3050 Laplace Transform Explorer — From Pattern Matching to Laplace</title>
+<title>ME 3050 Laplace Transform Explorer — Exponential Building Blocks</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <main>
   <section class="hero">
     <h1>ME 3050 — Laplace Transform Explorer</h1>
-    <p><strong>Pattern matching → Fourier-like frequency comparison → exponential weighting → Laplace transform</strong></p>
+    <p><strong>Exponential building blocks → multiply and accumulate → convergence → Laplace transform</strong></p>
     <p>
-      Explore how a signal relates to the exponential kernel
+      Explore how a signal is analyzed with the exponential kernel
       <span class="eq">e<sup>−st</sup> = e<sup>−σt</sup>e<sup>−jωt</sup></span>.
     </p>
   </section>
 
   <section class="card intro-card">
-    <h2>One idea before the formula</h2>
+    <h2>One idea before the formula: multiply and add</h2>
     <p>
-      A useful intuition is to treat a transform as a <strong>correlation-like comparison</strong>:
-      multiply the signal by a test pattern and accumulate the result over time.
+      Start with sampled time points. Multiply each signal sample by the corresponding exponential sample,
+      then add the contributions.
     </p>
+    <div class="definition compact-definition">
+      <div class="definition-label">Discrete approximation over a finite window</div>
+      <div class="definition-formula">F<sub>T</sub>(s) ≈ Σ f(t<sub>k</sub>)e<sup>−st<sub>k</sub></sup> Δt</div>
+    </div>
     <div class="concept-strip">
-      <div><strong>Signal</strong><span>f(t)</span></div>
+      <div><strong>Signal sample</strong><span>f(t<sub>k</sub>)</span></div>
       <div class="arrow">×</div>
-      <div><strong>Exponential pattern</strong><span>e<sup>−st</sup></span></div>
+      <div><strong>Exponential sample</strong><span>e<sup>−st<sub>k</sub></sup></span></div>
       <div class="arrow">→</div>
-      <div><strong>Accumulate</strong><span>∫ · dt</span></div>
+      <div><strong>Add over time</strong><span>Σ · Δt</span></div>
       <div class="arrow">→</div>
-      <div><strong>Transform value</strong><span>F(s)</span></div>
+      <div><strong>Finite-window value</strong><span>F<sub>T</sub>(s)</span></div>
     </div>
     <p class="small-note">
-      “Correlation-like” is intuition, not a Pearson correlation coefficient. The Laplace transform is a complex integral transform.
+      As Δt becomes smaller, the sum approaches an integral. The subscript T reminds us that the plots below use a finite observation window, 0 ≤ t ≤ T.
     </p>
   </section>
 
@@ -62,7 +66,7 @@
       </div>
     </div>
     <div class="preset-row">
-      <button id="fourierBtn" type="button">σ = 0: frequency only</button>
+      <button id="fourierBtn" type="button">σ = 0: finite-window frequency view</button>
       <button id="laplaceBtn" type="button">Add exponential weighting</button>
       <button id="matchBtn" type="button">Jump to key frequency</button>
     </div>
@@ -72,6 +76,7 @@
       <div class="stat"><div class="k">|F<sub>T</sub>(s)|</div><div class="v" id="magStat"></div></div>
       <div class="stat"><div class="k">Current viewpoint</div><div class="v text" id="viewStat"></div></div>
     </div>
+    <div class="mode-note" id="modeNote" aria-live="polite"></div>
   </section>
 
   <section class="card">
@@ -92,20 +97,38 @@
   </section>
 
   <section class="card">
-    <h2>Step 2. Multiply and accumulate</h2>
+    <h2>Step 2. Multiply and accumulate over a finite window</h2>
     <p class="section-lead">
       The real channel multiplies the signal by <span class="formula">e<sup>−σt</sup> cos(ωt)</span>.
-      Positive and negative contributions can reinforce or cancel as they are accumulated.
+      The slope of the running integral is the current product: positive product pushes the total upward, negative product pulls it downward.
     </p>
     <div class="legend" aria-hidden="true">
       <span class="product">Product</span>
-      <span class="running">Running integral</span>
+      <span class="running">Finite-window running integral</span>
     </div>
     <div class="plot-wrap">
-      <svg id="productPlot" viewBox="0 0 1000 430" role="img" aria-label="Product of signal and exponential pattern with running accumulated integral"></svg>
+      <svg id="productPlot" viewBox="0 0 1000 430" role="img" aria-label="Product of signal and exponential pattern with finite-window running integral"></svg>
     </div>
+    <div class="note" id="accumulationNote"></div>
+
+    <div class="average-aid" id="averageAid">
+      <h3>Teaching aid for σ = 0: time-averaged matching</h3>
+      <p class="section-lead">
+        This extra curve is <strong>not the Laplace transform</strong>. It divides the running real-channel accumulation by elapsed time,
+        <span class="formula">A(t) = (1/t)∫<sub>0</sub><sup>t</sup> f(τ)cos(ωτ)dτ</span>,
+        so repeated positive/negative cancellation becomes easier to see.
+      </p>
+      <div class="legend" aria-hidden="true">
+        <span class="average">Time-averaged matching A(t)</span>
+      </div>
+      <div class="plot-wrap">
+        <svg id="averagePlot" viewBox="0 0 1000 430" role="img" aria-label="Time averaged frequency matching teaching aid"></svg>
+      </div>
+      <div class="small-note" id="averageNote"></div>
+    </div>
+
     <div class="note">
-      The complete Laplace value is complex. A second quadrature channel uses
+      The complete finite-window value is complex. A second quadrature channel uses
       <span class="formula">−e<sup>−σt</sup> sin(ωt)</span>; together the two channels form
       <span class="formula">F<sub>T</sub>(s)</span>.
     </div>
@@ -113,34 +136,46 @@
 
   <section class="card">
     <h2>Step 3. Scan across frequency</h2>
-    <p class="section-lead">
-      Hold σ fixed and scan ω. The magnitude <span class="formula">|F<sub>T</sub>(σ + jω)|</span>
-      becomes larger where the signal has stronger oscillatory agreement with the test pattern.
-    </p>
+    <p class="section-lead" id="sweepLead"></p>
     <div class="legend" aria-hidden="true">
       <span class="sweep">|F<sub>T</sub>(σ + jω)|</span>
       <span class="current">Current ω</span>
       <span class="target" id="targetLegend">Key signal frequency</span>
     </div>
     <div class="plot-wrap">
-      <svg id="sweepPlot" viewBox="0 0 1000 430" role="img" aria-label="Magnitude of finite-time Laplace transform as frequency is scanned"></svg>
+      <svg id="sweepPlot" viewBox="0 0 1000 430" role="img" aria-label="Magnitude of finite-window transform as frequency is scanned"></svg>
     </div>
+    <div class="note" id="sweepNote"></div>
   </section>
 
   <section class="card bridge-card">
-    <h2>From Fourier intuition to Laplace</h2>
+    <h2>Two different ideas meet at s = σ + jω</h2>
     <div class="bridge-grid">
       <div>
-        <h3>Set σ = 0</h3>
+        <h3>σ = 0: finite-window Fourier-like view</h3>
         <p class="math">e<sup>−st</sup> = e<sup>−jωt</sup></p>
-        <p>Only the oscillatory comparison remains. This is the Fourier-like viewpoint.</p>
+        <p>
+          There is no exponential damping. For an undamped sinusoid, the ordinary improper integral to ∞ does not generally converge.
+          Over a finite window, however, frequency matching and cancellation are easy to visualize. Orthogonality is captured cleanly by the time-averaged teaching aid.
+        </p>
       </div>
       <div>
-        <h3>Allow σ &gt; 0</h3>
+        <h3>σ &gt; 0: Laplace convergence</h3>
         <p class="math">e<sup>−st</sup> = e<sup>−σt</sup>e<sup>−jωt</sup></p>
-        <p>Now the comparison also includes exponential time weighting. This leads to the Laplace viewpoint.</p>
+        <p>
+          The factor e<sup>−σt</sup> suppresses late-time contributions. For signals of suitable exponential order, the running integral approaches a fixed complex value as T grows.
+        </p>
       </div>
     </div>
+
+    <div class="example-pair">
+      <div class="definition-label">Example: pure oscillation</div>
+      <div class="definition-formula">ℒ{cos(ω<sub>0</sub>t)} = s / (s² + ω<sub>0</sub>²), &nbsp; Re(s) &gt; 0</div>
+      <p>
+        A pure sinusoid therefore has a perfectly valid Laplace transform. The convergence comes from the positive real part σ of s—not from taking a time average.
+      </p>
+    </div>
+
     <div class="definition">
       <div class="definition-label">Laplace transform</div>
       <div class="definition-formula">F(s) = ∫<sub>0</sub><sup>∞</sup> f(t)e<sup>−st</sup> dt, &nbsp; s = σ + jω</div>
