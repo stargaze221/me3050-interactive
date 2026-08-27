@@ -10,6 +10,7 @@
   --kernel:#d97706;
   --product:#7c3aed;
   --running:#15956b;
+  --average:#a14d15;
   --sweep:#7c3aed;
   --current:#d97706;
   --target:#2653a5;
@@ -40,7 +41,7 @@ main{max-width:1120px;margin:0 auto;padding:22px}
 .card h2{font-size:1.1rem;margin:0 0 12px}
 .card h3{font-size:1rem;margin:0 0 8px}
 .intro-card p,.section-lead{line-height:1.55;color:#344054}
-.small-note{font-size:.86rem;color:var(--muted)!important;margin-bottom:0}
+.small-note{font-size:.86rem;color:var(--muted)!important;margin-bottom:0;line-height:1.5}
 .concept-strip{
   display:grid;grid-template-columns:1fr auto 1.35fr auto 1fr auto 1fr;
   align-items:center;gap:8px;margin:16px 0;
@@ -76,6 +77,12 @@ button:hover{background:#f2f5fa}
 .stat .k{font-size:.78rem;color:var(--muted);margin-bottom:3px}
 .stat .v{font-weight:750;font-variant-numeric:tabular-nums}
 .stat .v.text{font-size:.9rem;font-variant-numeric:normal}
+.mode-note{
+  margin-top:12px;border-radius:10px;padding:11px 13px;line-height:1.5;font-size:.9rem;
+  border:1px solid var(--line);
+}
+.mode-note.fourier-mode{background:#fff8ed;border-color:#f1d5ad}
+.mode-note.laplace-mode{background:#f1fbf7;border-color:#b9e3d2}
 .plot-wrap{position:relative;width:100%;overflow:hidden}
 svg{width:100%;height:auto;display:block}
 .axis{stroke:#7d8698;stroke-width:1}
@@ -87,6 +94,7 @@ svg{width:100%;height:auto;display:block}
 .kernel-line{fill:none;stroke:var(--kernel);stroke-width:2.3;stroke-dasharray:8 5}
 .product-line{fill:none;stroke:var(--product);stroke-width:2.3}
 .running-line{fill:none;stroke:var(--running);stroke-width:2.8}
+.average-line{fill:none;stroke:var(--average);stroke-width:2.8}
 .sweep-line{fill:none;stroke:var(--sweep);stroke-width:3}
 .current-line{stroke:var(--current);stroke-width:2;stroke-dasharray:6 5}
 .target-line{stroke:var(--target);stroke-width:1.5;stroke-dasharray:3 5}
@@ -97,6 +105,7 @@ svg{width:100%;height:auto;display:block}
 .legend .kernel{color:var(--kernel)}
 .legend .product{color:var(--product)}
 .legend .running{color:var(--running)}
+.legend .average{color:var(--average)}
 .legend .sweep{color:var(--sweep)}
 .legend .current{color:var(--current)}
 .legend .target{color:var(--target)}
@@ -105,6 +114,11 @@ svg{width:100%;height:auto;display:block}
   padding:11px 13px;border-radius:8px;line-height:1.55;margin-top:10px;
 }
 .formula,.math,.definition-formula{font-family:"Cambria Math","Times New Roman",serif}
+.average-aid{
+  margin-top:16px;padding:15px;border:1px solid #ead5c5;background:#fffbf7;border-radius:12px;
+}
+.average-aid[hidden]{display:none}
+.average-aid h3{color:#6f3614;margin-bottom:7px}
 .bridge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
 .bridge-grid>div{border:1px solid var(--line);border-radius:10px;background:#fbfcff;padding:14px}
 .bridge-grid p{line-height:1.5;margin:7px 0}
@@ -112,8 +126,14 @@ svg{width:100%;height:auto;display:block}
 .definition{
   border:2px solid #4f2683;background:#f6f3fa;border-radius:12px;padding:18px;margin:16px 0;text-align:center;
 }
+.compact-definition{padding:13px 16px;margin:14px 0}
 .definition-label{font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:#5f4a7d;font-weight:800;margin-bottom:8px}
 .definition-formula{font-size:clamp(1.1rem,2.6vw,1.4rem)}
+.example-pair{
+  border:1px solid #c7d7ef;background:#f5f9ff;border-radius:12px;padding:15px 17px;margin:16px 0;
+}
+.example-pair .definition-formula{text-align:center;margin:8px 0}
+.example-pair p{line-height:1.55;margin:8px 0 0;color:#344054}
 .payoff{border-left-color:var(--running);background:#f1fbf7}
 @media (max-width:820px){
   .concept-strip{grid-template-columns:1fr;gap:6px}.concept-strip .arrow{transform:rotate(90deg)}
