@@ -3,22 +3,60 @@
 
   const T = 10;
   const N = 900;
-  const signalDecay = 0.35;
-  const signalOmega = 3.0;
   const omegaMax = 6.0;
+
+  const presets = {
+    decaying: {
+      formula: "f(t) = e<sup>−0.35t</sup> cos(3t)",
+      hint: "What to notice: the signal contains both oscillation and decay. Start near ω = 3, then add σ to see exponential weighting.",
+      keyFreqs: [3],
+      defaultOmega: 3,
+      defaultSigma: 0,
+      value: t => Math.exp(-0.35 * t) * Math.cos(3 * t)
+    },
+    pure: {
+      formula: "f(t) = cos(3t)",
+      hint: "What to notice: with σ = 0, the frequency scan gives the clearest Fourier-like matching near ω = 3 rad/s.",
+      keyFreqs: [3],
+      defaultOmega: 3,
+      defaultSigma: 0,
+      value: t => Math.cos(3 * t)
+    },
+    two: {
+      formula: "f(t) = cos(2t) + 0.6 cos(5t)",
+      hint: "What to notice: one signal can contain more than one oscillatory component. Look for two peaks near 2 and 5 rad/s.",
+      keyFreqs: [2, 5],
+      defaultOmega: 2,
+      defaultSigma: 0,
+      value: t => Math.cos(2 * t) + 0.6 * Math.cos(5 * t)
+    },
+    step: {
+      formula: "f(t) = 1, &nbsp; t ≥ 0",
+      hint: "What to notice: there is no oscillation to match. At ω = 0, changing σ directly changes the exponential weighting of the accumulated area.",
+      keyFreqs: [0],
+      defaultOmega: 0,
+      defaultSigma: 0.6,
+      value: () => 1
+    }
+  };
 
   const omegaEl = document.getElementById("omega");
   const sigmaEl = document.getElementById("sigma");
+  const presetEl = document.getElementById("signalPreset");
   const omegaVal = document.getElementById("omegaVal");
   const sigmaVal = document.getElementById("sigmaVal");
   const reStat = document.getElementById("reStat");
   const imStat = document.getElementById("imStat");
   const magStat = document.getElementById("magStat");
   const viewStat = document.getElementById("viewStat");
+  const presetHint = document.getElementById("presetHint");
+  const signalFormula = document.getElementById("signalFormula");
+  const targetLegend = document.getElementById("targetLegend");
   const compareNote = document.getElementById("compareNote");
   const comparePlot = document.getElementById("comparePlot");
   const productPlot = document.getElementById("productPlot");
   const sweepPlot = document.getElementById("sweepPlot");
+  const matchBtn = document.getElementById("matchBtn");
 
   const NS = "http://www.w3.org/2000/svg";
   const M = { left: 72, right: 28, top: 28, bottom: 58 };
@@ -28,7 +66,9 @@
   const PH = H - M.top - M.bottom;
 
   const times = Array.from({ length: N }, (_, i) => (T * i) / (N - 1));
-  const signal = times.map(t => Math.exp(-signalDecay * t) * Math.cos(signalOmega * t));
+  let currentPreset = presets.decaying;
+  let signal = times.map(currentPreset.value);
+  let targetIndex = 0;
 
   function svgEl(name, attrs = {}, text = "") {
     const el = document.createElementNS(NS, name);
@@ -143,6 +183,12 @@
     return out;
   }
 
+  function nearestKeyFrequency(omega) {
+    return currentPreset.keyFreqs.reduce((best, f) => {
+      return Math.abs(omega - f) < Math.abs(omega - best) ? f : best;
+    }, currentPreset.keyFreqs[0]);
+  }
+
   function drawCompare(omega, sigma) {
     clear(comparePlot);
     const kernel = times.map(t => Math.exp(-sigma * t) * Math.cos(omega * t));
@@ -166,13 +212,23 @@
       class: "kernel-line"
     }));
 
-    const freqDiff = Math.abs(omega - signalOmega);
+    if (presetEl.value === "step") {
+      if (omega < 0.18) {
+        compareNote.innerHTML = `<strong>No oscillatory mismatch:</strong> with ω near 0, the kernel is essentially e<sup>−σt</sup>. ${sigma > 0 ? "Changing σ changes how strongly later time is weighted." : "With σ = 0, every time contributes equally over this finite window."}`;
+      } else {
+        compareNote.innerHTML = `<strong>Oscillatory cancellation:</strong> the step signal does not oscillate, but the test kernel does. Positive and negative contributions increasingly cancel.`;
+      }
+      return;
+    }
+
+    const nearest = nearestKeyFrequency(omega);
+    const freqDiff = Math.abs(omega - nearest);
     if (freqDiff < 0.18) {
-      compareNote.innerHTML = `<strong>Frequency alignment:</strong> ω is near 3 rad/s, so the oscillations line up well. ${sigma === 0 ? "With σ = 0, there is no extra exponential weighting." : "The factor e<sup>−σt</sup> additionally emphasizes earlier time."}`;
+      compareNote.innerHTML = `<strong>Frequency alignment:</strong> ω is near ${nearest} rad/s, one of this signal's main oscillatory components. ${sigma === 0 ? "With σ = 0, there is no extra exponential weighting." : "The factor e<sup>−σt</sup> additionally emphasizes earlier time."}`;
     } else if (freqDiff < 0.8) {
-      compareNote.innerHTML = `<strong>Partial alignment:</strong> the test oscillation is close to the signal frequency, but phase agreement gradually drifts. ${sigma > 0 ? "Exponential weighting also reduces later-time contributions." : ""}`;
+      compareNote.innerHTML = `<strong>Partial alignment:</strong> the test oscillation is near a signal component, but agreement drifts over time. ${sigma > 0 ? "Exponential weighting also reduces later-time contributions." : ""}`;
     } else {
-      compareNote.innerHTML = `<strong>Frequency mismatch:</strong> positive and negative contributions tend to cancel because the oscillations do not remain aligned. ${sigma > 0 ? "Exponential weighting reduces the influence of later time." : ""}`;
+      compareNote.innerHTML = `<strong>Frequency mismatch:</strong> positive and negative contributions tend to cancel because the test pattern does not remain aligned with a main signal component. ${sigma > 0 ? "Exponential weighting reduces the influence of later time." : ""}`;
     }
   }
 
@@ -241,14 +297,26 @@
       class: "current-dot"
     }));
 
-    const xtarget = M.left + (signalOmega / omegaMax) * PW;
-    sweepPlot.appendChild(svgEl("line", {
-      x1: xtarget,
-      x2: xtarget,
-      y1: M.top,
-      y2: H - M.bottom,
-      class: "target-line"
-    }));
+    currentPreset.keyFreqs.forEach(freq => {
+      const xtarget = M.left + (freq / omegaMax) * PW;
+      sweepPlot.appendChild(svgEl("line", {
+        x1: xtarget,
+        x2: xtarget,
+        y1: M.top,
+        y2: H - M.bottom,
+        class: "target-line"
+      }));
+    });
+  }
+
+  function updatePresetText() {
+    signalFormula.innerHTML = currentPreset.formula;
+    presetHint.textContent = currentPreset.hint;
+    const freqs = currentPreset.keyFreqs;
+    targetLegend.textContent = freqs.length === 1
+      ? `Key frequency ${freqs[0]} rad/s`
+      : `Key frequencies ${freqs.join(" and ")} rad/s`;
+    matchBtn.textContent = freqs.length > 1 ? "Jump to next key frequency" : "Jump to key frequency";
   }
 
   function update() {
@@ -268,20 +336,36 @@
     drawSweep(sigma, omega);
   }
 
+  presetEl.addEventListener("change", () => {
+    currentPreset = presets[presetEl.value];
+    signal = times.map(currentPreset.value);
+    targetIndex = 0;
+    omegaEl.value = String(currentPreset.defaultOmega);
+    sigmaEl.value = String(currentPreset.defaultSigma);
+    updatePresetText();
+    update();
+  });
+
   omegaEl.addEventListener("input", update);
   sigmaEl.addEventListener("input", update);
+
   document.getElementById("fourierBtn").addEventListener("click", () => {
     sigmaEl.value = "0";
     update();
   });
+
   document.getElementById("laplaceBtn").addEventListener("click", () => {
     sigmaEl.value = "0.6";
     update();
   });
-  document.getElementById("matchBtn").addEventListener("click", () => {
-    omegaEl.value = "3";
+
+  matchBtn.addEventListener("click", () => {
+    const freqs = currentPreset.keyFreqs;
+    omegaEl.value = String(freqs[targetIndex]);
+    targetIndex = (targetIndex + 1) % freqs.length;
     update();
   });
 
+  updatePresetText();
   update();
 })();
