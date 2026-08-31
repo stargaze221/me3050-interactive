@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ME 3050 — Two Ways to Build a Signal</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#182235;--muted:#667085;--line:#d9e0eb;--grid:#e9eef6;--blue:#245da8;--orange:#c96b18;--purple:#7047b8;--green:#17836c;--red:#b64848;--teal:#12746d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1120px;margin:auto;padding:22px}.hero{background:linear-gradient(135deg,#173c73,#2a63af);color:#fff;border-radius:16px;padding:24px}.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;opacity:.82}.hero h1{margin:5px 0 8px;font-size:1.75rem}.hero p{margin:0;line-height:1.55;max-width:940px}.eq{margin-top:12px;background:rgba(255,255,255,.12);padding:11px 14px;border-radius:9px;font-family:"Cambria Math","Times New Roman",serif;line-height:1.6;display:inline-block}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0;box-shadow:0 3px 12px rgba(16,24,40,.045)}h2{font-size:1.1rem;margin:0 0 9px}.lead{color:#475467;line-height:1.55;margin:6px 0 12px}.big-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.view-card{border:1px solid var(--line);border-radius:12px;padding:15px;background:#fbfcff}.view-card h3{margin:0 0 8px;font-size:1rem}.view-card .formula{font-family:"Cambria Math","Times New Roman",serif;text-align:center;font-size:1.08rem;margin:10px 0}.arrow{font-size:1.25rem;text-align:center;color:#7b8494}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab{border:1px solid #bcc6d6;background:#fff;color:var(--ink);border-radius:999px;padding:8px 13px;font-weight:700;cursor:pointer}.tab[aria-selected="true"]{background:#eaf1fb;border-color:#7da2d2;color:#173c73}.panel{display:none}.panel.active{display:block}.controls{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:14px 18px;margin-bottom:12px}.control label{display:flex;justify-content:space-between;gap:10px;font-size:.9rem;font-weight:650;margin-bottom:6px}.control input,.control select{width:100%}.control select{border:1px solid #bcc6d6;border-radius:8px;padding:7px 9px;background:#fff;color:var(--ink)}.value{color:var(--blue);font-variant-numeric:tabular-nums}.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:.87rem;color:#475467;margin:4px 0 8px}.legend span:before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;background:currentColor;margin-right:6px;vertical-align:middle}.legend .original{color:var(--blue)}.legend .approx{color:var(--orange)}.legend .sample{color:var(--green)}.legend .component{color:var(--purple)}.legend .weighted{color:var(--red)}.plot-wrap{width:100%;overflow:hidden}svg{display:block;width:100%;height:auto;aspect-ratio:1000/420}.grid{stroke:var(--grid);stroke-width:1}.axis{stroke:#8a94a6;stroke-width:1}.tick{fill:#70798a;font-size:12px}.axislabel{fill:#475467;font-size:13px;font-weight:650}.original-line{fill:none;stroke:var(--blue);stroke-width:3}.approx-line{fill:none;stroke:var(--orange);stroke-width:2.6}.weighted-line{fill:none;stroke:var(--red);stroke-width:2.6}.component-line{fill:none;stroke:var(--purple);stroke-width:1.8;opacity:.6}.sample-line{stroke:var(--green);stroke-width:2}.sample-dot{fill:var(--green)}.envelope-line{fill:none;stroke:var(--orange);stroke-width:2;stroke-dasharray:7 4}.zero{stroke:#a7afbd;stroke-width:1.3}.formula-box{background:#f8f5ff;border-left:4px solid var(--purple);border-radius:8px;padding:12px 14px;line-height:1.58;margin-top:10px}.callout{background:#f0fdfa;border-left:4px solid var(--teal);border-radius:8px;padding:12px 14px;line-height:1.58}.math{font-family:"Cambria Math","Times New Roman",serif}.roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.road{border:1px solid var(--line);border-radius:10px;background:#fafbfe;padding:12px;text-align:center}.road strong{display:block;margin-bottom:5px}.road .math{font-size:1.02rem}.tiny{font-size:.88rem;color:var(--muted);line-height:1.45}.bridge{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-top:12px}.bridge>div{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fbfcff;text-align:center}.bridge .mid{border:0;background:transparent;font-size:1.4rem;color:#667085}footer{padding:10px 2px 24px}footer a{color:#2653a5;text-decoration:none;font-weight:650}@media(max-width:820px){.big-grid,.controls,.roadmap{grid-template-columns:1fr}.bridge{grid-template-columns:1fr}.bridge .mid{transform:rotate(90deg)}}@media(max-width:540px){main{padding:12px}.hero h1{font-size:1.42rem}}
+</style>
+</head>
+<body>
+<main>
+<section class="hero">
+<div class="eyebrow">ME 3050 — Dynamic Modeling and Controls</div>
+<h1>Two Ways to Build a Signal</h1>
+<p>A linear system becomes easier to understand when a complicated signal is built from simple pieces. Two especially useful choices are localized impulses and exponential components.</p>
+<div class="eq">same signal &nbsp;→&nbsp; different building blocks &nbsp;→&nbsp; different but equivalent system descriptions</div>
+</section>
+
+<section class="card">
+<h2>The big picture first</h2>
+<p class="lead">Both viewpoints use the same linearity idea: break the input into simple pieces, analyze each piece, and add the responses.</p>
+<div class="big-grid">
+<div class="view-card">
+<h3>Localized in time: shifted impulses</h3>
+<div class="formula">u(t) ≈ Σ u(t<sub>k</sub>) Δt δ(t−t<sub>k</sub>)</div>
+<div class="arrow">↓ LTI system</div>
+<div class="formula">δ(t−τ) → h(t−τ)</div>
+<div class="arrow">↓ continuous superposition</div>
+<div class="formula"><strong>y(t) = u(t) * h(t)</strong></div>
+</div>
+<div class="view-card">
+<h3>Structured by exponential behavior</h3>
+<div class="formula">u(t) ≈ Σ a<sub>k</sub> e<sup>s<sub>k</sub>t</sup></div>
+<div class="arrow">↓ LTI system</div>
+<div class="formula">e<sup>st</sup> → H(s)e<sup>st</sup></div>
+<div class="arrow">↓ transform representation</div>
+<div class="formula"><strong>Y(s) = H(s)U(s)</strong></div>
+</div>
+</div>
+<div class="callout" style="margin-top:13px"><strong>Goal for this lecture:</strong> understand why these two descriptions are connected by the Laplace transform, and why convolution in time becomes multiplication in the <span class="math">s</span>-domain.</div>
+</section>
+
+<section class="card">
+<h2>Explore the two building-block viewpoints</h2>
+<div class="tabs" role="tablist" aria-label="Building-block viewpoints">
+<button class="tab" id="tabImpulse" role="tab" aria-selected="true" aria-controls="impulsePanel">1. Localized pieces</button>
+<button class="tab" id="tabFourier" role="tab" aria-selected="false" aria-controls="fourierPanel">2. Harmonic pieces</button>
+<button class="tab" id="tabLaplace" role="tab" aria-selected="false" aria-controls="laplacePanel">3. Fourier → Laplace</button>
+</div>
+
+<div id="impulsePanel" class="panel active" role="tabpanel" aria-labelledby="tabImpulse">
+<p class="lead">Sample a smooth signal at many time locations. Each sample supplies the weight of one localized piece. As the cells get narrower, the sum approaches the original signal.</p>
+<div class="controls">
+<div class="control"><label for="impN">Number of time cells N <span class="value" id="impNVal"></span></label><input id="impN" type="range" min="5" max="60" step="1" value="12"></div>
+<div class="control"><label for="impShape">Signal</label><select id="impShape"><option value="mixed">Mixed smooth signal</option><option value="damped">Damped oscillation</option><option value="bumps">Two smooth bumps</option></select></div>
+<div class="control"><label for="impScale">Amplitude <span class="value" id="impScaleVal"></span></label><input id="impScale" type="range" min="0.6" max="1.5" step="0.05" value="1"></div>
+</div>
+<div class="legend"><span class="original">original signal</span><span class="sample">localized weighted pieces</span><span class="approx">finite reconstruction</span></div>
+<div class="plot-wrap"><svg id="impulsePlot" viewBox="0 0 1000 420" role="img" aria-label="Signal approximated by localized weighted pieces"></svg></div>
+<div class="formula-box"><span class="math">u(t) ≈ Σ u(t<sub>k</sub>) Δt δ<sub>Δt</sub>(t−t<sub>k</sub>)</span> &nbsp;→&nbsp; as <span class="math">Δt → 0</span>, a continuous superposition of shifted impulses.</div>
+</div>
+
+<div id="fourierPanel" class="panel" role="tabpanel" aria-labelledby="tabFourier">
+<p class="lead">A periodic signal can also be built from global oscillatory pieces. Increase the number of harmonics and watch the Fourier-series reconstruction improve.</p>
+<div class="controls">
+<div class="control"><label for="harmN">Number of harmonics N <span class="value" id="harmNVal"></span></label><input id="harmN" type="range" min="1" max="25" step="1" value="4"></div>
+<div class="control"><label for="harmShape">Periodic signal</label><select id="harmShape"><option value="square">Square-like wave</option><option value="triangle">Triangle wave</option><option value="smooth">Smooth periodic signal</option></select></div>
+<div class="control"><label for="showComponents">Show first harmonic</label><select id="showComponents"><option value="yes">Yes</option><option value="no">No</option></select></div>
+</div>
+<div class="legend"><span class="original">target periodic signal</span><span class="approx">Fourier reconstruction</span><span class="component">first harmonic component</span></div>
+<div class="plot-wrap"><svg id="fourierPlot" viewBox="0 0 1000 420" role="img" aria-label="Fourier series reconstruction using harmonic components"></svg></div>
+<div class="formula-box"><span class="math">f<sub>N</sub>(t) = a<sub>0</sub>/2 + Σ[a<sub>n</sub>cos(nω<sub>0</sub>t)+b<sub>n</sub>sin(nω<sub>0</sub>t)]</span><br><span class="tiny">The same idea can be written with complex exponentials: <span class="math">f(t) ≈ Σ c<sub>k</sub>e<sup>jkω<sub>0</sub>t</sup></span>. Fourier series uses <strong>discrete harmonic frequencies</strong>.</span></div>
+</div>
+
+<div id="laplacePanel" class="panel" role="tabpanel" aria-labelledby="tabLaplace">
+<p class="lead">Fourier transform extends the harmonic idea from discrete frequencies to a continuum. Laplace then extends the kernel from purely oscillatory <span class="math">e<sup>−jωt</sup></span> to complex exponential <span class="math">e<sup>−(σ+jω)t</sup></span>.</p>
+<div class="controls">
+<div class="control"><label for="sigma">Exponential weighting σ <span class="value" id="sigmaVal"></span></label><input id="sigma" type="range" min="0" max="1.2" step="0.05" value="0"></div>
+<div class="control"><label for="omega">Example frequency ω <span class="value" id="omegaVal"></span></label><input id="omega" type="range" min="0.5" max="6" step="0.1" value="2.5"></div>
+<div class="control"><label for="lapSignal">Signal</label><select id="lapSignal"><option value="persistent">Persistent mixed oscillation</option><option value="decay">Naturally decaying oscillation</option><option value="pulse">Finite pulse-like signal</option></select></div>
+</div>
+<div class="legend"><span class="original">f(t)</span><span class="weighted">f(t)e<sup>−σt</sup></span><span class="approx">envelope e<sup>−σt</sup></span></div>
+<div class="plot-wrap"><svg id="laplacePlot" viewBox="0 0 1000 420" role="img" aria-label="Fourier to Laplace exponential weighting view"></svg></div>
+<div class="bridge">
+<div><strong>Fourier transform</strong><div class="math">σ = 0</div><div class="math">F(jω)=∫ f(t)e<sup>−jωt</sup>dt</div></div>
+<div class="mid">→</div>
+<div><strong>Laplace transform</strong><div class="math">s = σ + jω</div><div class="math">F(s)=∫ f(t)e<sup>−σt</sup>e<sup>−jωt</sup>dt</div></div>
+</div>
+<div class="callout" style="margin-top:13px"><strong>Useful viewpoint:</strong> along a fixed <span class="math">σ</span>, the Laplace transform is Fourier-like analysis of the exponentially weighted signal <span class="math">f(t)e<sup>−σt</sup></span>. The full Laplace transform is more general than the Fourier transform because <span class="math">s</span> can move away from the imaginary axis.</div>
+</div>
+</section>
+
+<section class="card">
+<h2>One pattern appears again and again</h2>
+<div class="roadmap">
+<div class="road"><strong>Impulse decomposition</strong><div class="math">Σ weighted shifts → ∫</div><div class="tiny">Continuous superposition in time</div></div>
+<div class="road"><strong>Fourier series → transform</strong><div class="math">Σ discrete harmonics → ∫ continuous frequencies</div><div class="tiny">A discrete spectral representation becomes continuous</div></div>
+<div class="road"><strong>Laplace analysis</strong><div class="math">Σ f(t<sub>k</sub>)e<sup>−st<sub>k</sub></sup>Δt → ∫ f(t)e<sup>−st</sup>dt</div><div class="tiny">A weighted sum becomes a continuous integral</div></div>
+</div>
+<div class="formula-box" style="margin-top:13px"><strong>Keep this idea:</strong> an integral is a continuous sum. Linearity lets us add the responses of the pieces. The next step is to use the impulse decomposition to derive convolution, and then see why the Laplace transform turns that convolution into multiplication.</div>
+</section>
+
+<footer><a href="../">← ME 3050 Interactive Explorers</a></footer>
+</main>
+<script>
+(()=>{"use strict";
+const NS="http://www.w3.org/2000/svg",$=id=>document.getElementById(id);function E(tag,attrs={},text=null){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==null)e.textContent=text;return e}function clear(svg){while(svg.firstChild)svg.removeChild(svg.firstChild)}function fmt(v,d=2){return Number(Math.abs(v)<1e-12?0:v).toFixed(d)}
+const tabs=[[$("tabImpulse"),$("impulsePanel")],[$("tabFourier"),$("fourierPanel")],[$("tabLaplace"),$("laplacePanel")]];tabs.forEach(([b,p])=>b.addEventListener("click",()=>{tabs.forEach(([bb,pp])=>{bb.setAttribute("aria-selected","false");pp.classList.remove("active")});b.setAttribute("aria-selected","true");p.classList.add("active")}));
+function axes(svg,x0,x1,y0,y1,xlab,ylab){clear(svg);const W=1000,H=420,l=70,r=24,t=18,b=54,pw=W-l-r,ph=H-t-b,x=v=>l+(v-x0)/(x1-x0)*pw,y=v=>t+(y1-v)/(y1-y0)*ph;for(let i=0;i<=8;i++){const xv=x0+(x1-x0)*i/8;svg.appendChild(E("line",{x1:x(xv),y1:t,x2:x(xv),y2:H-b,class:"grid"}));svg.appendChild(E("text",{x:x(xv),y:H-b+20,"text-anchor":"middle",class:"tick"},fmt(xv,1)))}for(let i=0;i<=6;i++){const yv=y0+(y1-y0)*i/6;svg.appendChild(E("line",{x1:l,y1:y(yv),x2:W-r,y2:y(yv),class:"grid"}));svg.appendChild(E("text",{x:l-9,y:y(yv)+4,"text-anchor":"end",class:"tick"},fmt(yv,1)))}if(y0<0&&y1>0)svg.appendChild(E("line",{x1:l,y1:y(0),x2:W-r,y2:y(0),class:"zero"}));svg.appendChild(E("line",{x1:l,y1:t,x2:l,y2:H-b,class:"axis"}));svg.appendChild(E("line",{x1:l,y1:H-b,x2:W-r,y2:H-b,class:"axis"}));svg.appendChild(E("text",{x:(l+W-r)/2,y:H-13,"text-anchor":"middle",class:"axislabel"},xlab));svg.appendChild(E("text",{x:17,y:(t+H-b)/2,"text-anchor":"middle",class:"axislabel",transform:`rotate(-90 17 ${(t+H-b)/2})`},ylab));return{x,y,W,H,l,r,t,b}}
+function path(svg,map,fn,x0,x1,cls,n=1000){let d="";for(let i=0;i<=n;i++){const xx=x0+(x1-x0)*i/n,yy=fn(xx);d+=(i?"L":"M")+map.x(xx)+","+map.y(yy)}svg.appendChild(E("path",{d,class:cls}))}
+const impN=$("impN"),impShape=$("impShape"),impScale=$("impScale"),impulsePlot=$("impulsePlot");function impFun(t){const s=+impScale.value;if(impShape.value==="damped")return s*1.1*Math.exp(-.18*t)*Math.sin(2*t);if(impShape.value==="bumps")return s*(1.05*Math.exp(-.5*((t-2.1)/.72)**2)-.72*Math.exp(-.5*((t-5.4)/.9)**2)+.08);return s*(.65*Math.sin(1.05*t)+.28*Math.cos(2.45*t+.4)+.12*Math.sin(4.0*t))}function drawImpulse(){const N=+impN.value,T0=0,T1=8,dt=(T1-T0)/N;$("impNVal").textContent=N;$("impScaleVal").textContent=fmt(+impScale.value,2);let ymin=0,ymax=0;for(let i=0;i<1000;i++){const v=impFun(T0+(T1-T0)*i/999);ymin=Math.min(ymin,v);ymax=Math.max(ymax,v)}const pad=.18*(ymax-ymin||1);ymin-=pad;ymax+=pad;const m=axes(impulsePlot,T0,T1,ymin,ymax,"time t","amplitude");path(impulsePlot,m,impFun,T0,T1,"original-line");let stair="";for(let k=0;k<N;k++){const a=T0+k*dt,b=a+dt,tau=(a+b)/2,v=impFun(tau),xx=m.x(tau);impulsePlot.appendChild(E("line",{x1:xx,y1:m.y(0),x2:xx,y2:m.y(v),class:"sample-line"}));impulsePlot.appendChild(E("circle",{cx:xx,cy:m.y(v),r:3.3,class:"sample-dot"}));stair+=(k?"L":"M")+m.x(a)+","+m.y(v)+"L"+m.x(b)+","+m.y(v)}impulsePlot.appendChild(E("path",{d:stair,class:"approx-line"}))}
+[impN,impShape,impScale].forEach(el=>el.addEventListener("input",drawImpulse));
+const harmN=$("harmN"),harmShape=$("harmShape"),showComponents=$("showComponents"),fourierPlot=$("fourierPlot");const P=2*Math.PI;function target(theta){theta=((theta+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;if(harmShape.value==="square")return Math.tanh(8*Math.sin(theta));if(harmShape.value==="triangle")return 2/Math.PI*Math.asin(Math.sin(theta));return .75*Math.sin(theta)+.3*Math.cos(2*theta)-.18*Math.sin(3*theta)}function coeffs(N){const M=2400;let a0=0,a=[],b=[];for(let n=1;n<=N;n++){a[n]=0;b[n]=0}for(let i=0;i<M;i++){const th=-Math.PI+P*(i+.5)/M,v=target(th);a0+=v;for(let n=1;n<=N;n++){a[n]+=v*Math.cos(n*th);b[n]+=v*Math.sin(n*th)}}a0*=2/M;for(let n=1;n<=N;n++){a[n]*=2/M;b[n]*=2/M}return{a0,a,b}}function drawFourier(){const N=+harmN.value;$("harmNVal").textContent=N;const c=coeffs(N),recon=th=>{let s=c.a0/2;for(let n=1;n<=N;n++)s+=c.a[n]*Math.cos(n*th)+c.b[n]*Math.sin(n*th);return s},first=th=>c.a0/2+c.a[1]*Math.cos(th)+c.b[1]*Math.sin(th);const m=axes(fourierPlot,-Math.PI,3*Math.PI,-1.45,1.45,"phase / time","amplitude");path(fourierPlot,m,target,-Math.PI,3*Math.PI,"original-line");path(fourierPlot,m,recon,-Math.PI,3*Math.PI,"approx-line");if(showComponents.value==="yes")path(fourierPlot,m,first,-Math.PI,3*Math.PI,"component-line")}
+[harmN,harmShape,showComponents].forEach(el=>el.addEventListener("input",drawFourier));
+const sigma=$("sigma"),omega=$("omega"),lapSignal=$("lapSignal"),laplacePlot=$("laplacePlot");function lapFun(t){if(lapSignal.value==="decay")return 1.05*Math.exp(-.18*t)*Math.cos(2.2*t)+.25*Math.exp(-.18*t)*Math.sin(4.1*t);if(lapSignal.value==="pulse")return Math.exp(-.5*((t-2.1)/.65)**2)-.55*Math.exp(-.5*((t-5.0)/.85)**2);return .72*Math.cos(2.0*t)+.3*Math.cos(4.3*t+.5)}function drawLaplace(){const sg=+sigma.value,om=+omega.value;$("sigmaVal").textContent=fmt(sg,2);$("omegaVal").textContent=fmt(om,1);const T0=0,T1=10,m=axes(laplacePlot,T0,T1,-1.55,1.55,"time t","amplitude");path(laplacePlot,m,lapFun,T0,T1,"original-line");path(laplacePlot,m,t=>lapFun(t)*Math.exp(-sg*t),T0,T1,"weighted-line");path(laplacePlot,m,t=>Math.exp(-sg*t),T0,T1,"envelope-line");path(laplacePlot,m,t=>-Math.exp(-sg*t),T0,T1,"envelope-line");const y=1.32;laplacePlot.appendChild(E("text",{x:m.x(.25),y:m.y(y),class:"axislabel"},`kernel example: e^(−${fmt(sg,2)}t) · cos(${fmt(om,1)}t)`))}
+[sigma,omega,lapSignal].forEach(el=>el.addEventListener("input",drawLaplace));drawImpulse();drawFourier();drawLaplace();
+})();
+</script>
+</body>
+</html>
