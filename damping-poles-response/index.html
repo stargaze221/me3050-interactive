@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ME 3050 — Damping, Poles, and Response Explorer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="eyebrow">ME 3050 — Dynamic Modeling and Controls</div>
+    <h1>Damping, Poles, and Response Explorer</h1>
+    <p>Move the damping coefficient and watch the poles and step response change together.</p>
+    <div class="equation">ẍ + c ẋ + 4x = 4, &nbsp; x(0)=0, &nbsp; ẋ(0)=0</div>
+    <div class="fixed">Fixed: m = 1, k = 4, F₀ = 4 &nbsp; → &nbsp; x<sub>ss</sub> = F₀/k = 1</div>
+  </section>
+
+  <section class="card control-card">
+    <div class="control-head">
+      <div>
+        <h2>Change only the damping coefficient</h2>
+        <p>Critical damping occurs at c<sub>crit</sub> = 2√(mk) = 4.</p>
+      </div>
+      <div id="regimeBadge" class="regime-badge"></div>
+    </div>
+
+    <label class="slider-label" for="damping">
+      Damping coefficient c
+      <span id="cValue" class="value"></span>
+    </label>
+    <input id="damping" type="range" min="0" max="8" step="0.02" value="2">
+
+    <div class="range-labels" aria-hidden="true">
+      <span>0</span><span>c = 4 critical</span><span>8</span>
+    </div>
+
+    <div class="preset-row">
+      <button data-c="0">Undamped · c = 0</button>
+      <button data-c="2">Underdamped · c = 2</button>
+      <button data-c="4">Critical · c = 4</button>
+      <button data-c="6">Overdamped · c = 6</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="k">Pole pair</div><div id="poleStat" class="v compact"></div></div>
+      <div class="stat"><div class="k">Response character</div><div id="responseStat" class="v"></div></div>
+      <div class="stat"><div class="k">Slow decay rate</div><div id="slowPoleStat" class="v"></div></div>
+      <div class="stat"><div class="k">2% settling</div><div id="settlingStat" class="v"></div></div>
+    </div>
+  </section>
+
+  <section class="two-column">
+    <section class="card">
+      <h2>1. Watch the poles move</h2>
+      <p class="lead">The roots of s² + cs + 4 = 0 are plotted in the complex s-plane.</p>
+      <div class="plot-wrap pole-wrap">
+        <svg id="polePlot" viewBox="0 0 700 520" role="img" aria-label="Pole locations in the complex plane"></svg>
+      </div>
+      <div class="plot-legend">
+        <span><i class="current-swatch"></i>Current poles</span>
+        <span><i class="track-swatch"></i>Pole path as c changes</span>
+        <span><i class="critical-swatch"></i>Critical point</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Watch the motion change</h2>
+      <p class="lead">A constant force F₀ = 4 is applied at t = 0.</p>
+      <div class="plot-wrap">
+        <svg id="responsePlot" viewBox="0 0 700 520" role="img" aria-label="Spring mass damper step response"></svg>
+      </div>
+      <div class="plot-legend">
+        <span><i class="response-swatch"></i>Current response</span>
+        <span><i class="reference-swatch"></i>Critical response, c = 4</span>
+        <span><i class="steady-swatch"></i>Equilibrium x = 1</span>
+      </div>
+    </section>
+  </section>
+
+  <section id="insightCard" class="card insight-card">
+    <div class="insight-tag">READ THE POLES</div>
+    <h2 id="insightTitle"></h2>
+    <p id="insightText" class="insight-text"></p>
+    <div id="insightEquation" class="insight-equation"></div>
+  </section>
+
+  <section class="card">
+    <h2>3. Why is critical damping special?</h2>
+    <div class="critical-grid">
+      <div class="critical-step">
+        <div class="num">1</div>
+        <div><strong>Below c = 4</strong><p>The poles are complex conjugates. The response can return quickly, but it oscillates around equilibrium.</p></div>
+      </div>
+      <div class="critical-step emphasis">
+        <div class="num">2</div>
+        <div><strong>At c = 4</strong><p>The poles meet at s = −2. This is the boundary between oscillatory and non-oscillatory motion.</p></div>
+      </div>
+      <div class="critical-step">
+        <div class="num">3</div>
+        <div><strong>Above c = 4</strong><p>The poles split along the real axis. One pole moves back toward the imaginary axis, producing a slower mode.</p></div>
+      </div>
+    </div>
+
+    <div class="takeaway">
+      <strong>Critical damping is the fastest non-oscillatory return to equilibrium.</strong>
+      <span>Watch the dashed critical-response curve while moving c above 4: extra damping actually makes the slow mode slower.</span>
+    </div>
+  </section>
+
+  <section class="card try-card">
+    <h2>Try this in class</h2>
+    <ol>
+      <li>Start at <strong>c = 0</strong>. Where are the poles? Does the oscillation decay?</li>
+      <li>Move toward <strong>c = 4</strong>. Watch the conjugate poles meet at s = −2.</li>
+      <li>Move past <strong>c = 4</strong>. Which real pole moves toward the imaginary axis?</li>
+      <li>Compare c = 4 and c = 6. Which non-oscillatory response reaches equilibrium sooner?</li>
+    </ol>
+  </section>
+
+  <footer><a href="../">← ME 3050 Interactive Explorers</a></footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
